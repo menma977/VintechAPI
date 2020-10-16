@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+if(config("app.env") == "local") {
+    Route::get('/test/view/{page}', function ($page) {
+        return view($page);
+    });
+}
