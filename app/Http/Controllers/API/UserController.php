@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\HistoryStake;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -24,12 +25,14 @@ class UserController extends Controller
     $walletDeposit = Auth::user()->wallet_deposit;
     $walletWithdraw = Auth::user()->wallet_withdraw;
     $isStake = Auth::user()->stake == Carbon::now();
+    $getLastStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->first();
 
     $data = [
       'username' => $username,
       'walletDeposit' => $walletDeposit,
       'walletWithdraw' => $walletWithdraw,
-      'isStake' => $isStake
+      'isStake' => $isStake,
+      'lastStake' => $getLastStake
     ];
 
     return response()->json($data, 200);
@@ -85,6 +88,8 @@ class UserController extends Controller
             }
 
             $user->token = $user->createToken('android')->accessToken;
+            $isStake = Auth::user()->stake == Carbon::now();
+            $getLastStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->first();
             return response()->json([
               'username' => $user->username,
               'token' => $user->token,
@@ -92,6 +97,8 @@ class UserController extends Controller
               'walletDeposit' => $user->wallet_deposit,
               'walletWithdraw' => $user->wallet_withdraw,
               'balance' => $loginDoge["Doge"]["Balance"],
+              'isStake' => $isStake,
+              'lastStake' => $getLastStake
             ], 200);
           }
 

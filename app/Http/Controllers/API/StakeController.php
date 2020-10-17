@@ -16,8 +16,8 @@ class StakeController extends Controller
    */
   public function index()
   {
-    $getLastStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('id', 'desc')->first();
-    $getStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('id', 'desc')->take(10)->get();
+    $getLastStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->first();
+    $getStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->take(10)->get();
 
     $data = [
       'lastStake' => $getLastStake,
@@ -35,12 +35,11 @@ class StakeController extends Controller
   public function store(Request $request)
   {
     $this->validate($request, [
-      'user_id' => 'required|string|exists:users,id',
       'fund' => 'required',
       'possibility' => 'required',
       'result' => 'required|string',
       'status' => 'required|string',
-      'stop' => 'required|boolean'
+      'stop' => 'required'
     ]);
 
     $newStake = new HistoryStake();
@@ -50,7 +49,7 @@ class StakeController extends Controller
       $newStake->possibility = $request->possibility;
       $newStake->result = $request->result;
       $newStake->status = $request->status;
-      $newStake->stop = $request->stop;
+      $newStake->stop = $request->stop == "true";
       $newStake->save();
 
       HistoryStake::where('user', Auth::id())->where('stop', false)->update(['stop' => true]);
