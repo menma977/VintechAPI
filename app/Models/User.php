@@ -6,6 +6,7 @@ use GoldSpecDigital\LaravelEloquentUUID\Database\Eloquent\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 /**
  * Class User
@@ -22,7 +23,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class User extends Authenticatable
 {
-  use HasFactory, Notifiable, Uuid;
+  use HasFactory, Notifiable, Uuid, HasApiTokens;
 
   /**
    * The "type" of the auto-incrementing ID.
