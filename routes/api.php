@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\API\StakeController;
 use App\Http\Controllers\API\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

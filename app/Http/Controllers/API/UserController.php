@@ -14,6 +14,27 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
+
+  /**
+   * @return JsonResponse
+   */
+  public function index()
+  {
+    $username = Auth::user()->username;
+    $walletDeposit = Auth::user()->wallet_deposit;
+    $walletWithdraw = Auth::user()->wallet_withdraw;
+    $isStake = Auth::user()->stake == Carbon::now();
+
+    $data = [
+      'username' => $username,
+      'walletDeposit' => $walletDeposit,
+      'walletWithdraw' => $walletWithdraw,
+      'isStake' => $isStake
+    ];
+
+    return response()->json($data, 200);
+  }
+
   /**
    * @param Request $request
    * @return JsonResponse
@@ -70,6 +91,7 @@ class UserController extends Controller
               'session' => $loginDoge["SessionCookie"],
               'walletDeposit' => $user->wallet_deposit,
               'walletWithdraw' => $user->wallet_withdraw,
+              'balance' => $loginDoge["Doge"]["Balance"],
             ], 200);
           }
 
@@ -92,26 +114,6 @@ class UserController extends Controller
       ],
     ];
     return response()->json($data, 500);
-  }
-
-  /**
-   * @return JsonResponse
-   */
-  public function index()
-  {
-    $username = Auth::user()->username;
-    $walletDeposit = Auth::user()->wallet_deposit;
-    $walletWithdraw = Auth::user()->wallet_withdraw;
-    $isStake = Auth::user()->stake == Carbon::now();
-
-    $data = [
-      'username' => $username,
-      'walletDeposit' => $walletDeposit,
-      'walletWithdraw' => $walletWithdraw,
-      'isStake' => $isStake
-    ];
-
-    return response()->json($data, 200);
   }
 
   /**
