@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -64,7 +65,9 @@ class UserController extends Controller
 
             $user->token = $user->createToken('android')->accessToken;
             return response()->json([
+              'username' => $user->username,
               'token' => $user->token,
+              'session' => $loginDoge["SessionCookie"],
               'walletDeposit' => $user->wallet_deposit,
               'walletWithdraw' => $user->wallet_withdraw,
             ], 200);
@@ -91,11 +94,29 @@ class UserController extends Controller
     return response()->json($data, 500);
   }
 
+  /**
+   * @return JsonResponse
+   */
   public function index()
   {
+    $username = Auth::user()->username;
+    $walletDeposit = Auth::user()->wallet_deposit;
+    $walletWithdraw = Auth::user()->wallet_withdraw;
+    $isStake = Auth::user()->stake == Carbon::now();
 
+    $data = [
+      'username' => $username,
+      'walletDeposit' => $walletDeposit,
+      'walletWithdraw' => $walletWithdraw,
+      'isStake' => $isStake
+    ];
+
+    return response()->json($data, 200);
   }
 
+  /**
+   * @return JsonResponse
+   */
   public function logout()
   {
     $token = Auth::user()->tokens;
