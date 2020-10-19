@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\HistoryStake;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -21,18 +22,35 @@ class UserController extends Controller
    */
   public function index()
   {
+    $version = Setting::find(1)->version;
     $username = Auth::user()->username;
     $walletDeposit = Auth::user()->wallet_deposit;
     $walletWithdraw = Auth::user()->wallet_withdraw;
-    $isStake = Auth::user()->stake == Carbon::now();
-    $getLastStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->first();
+    if (Auth::user()->stake == null) {
+      $isStake = false;
+    } else {
+      $isStake = Carbon::parse(Auth::user()->stake)->format("d") == Carbon::now()->format("d");
+    }
+    $getLastStake = HistoryStake::where('user', Auth::id())->where('stop', false)->orderBy('created_at', 'DESC')->first();
 
     $data = [
       'username' => $username,
       'walletDeposit' => $walletDeposit,
       'walletWithdraw' => $walletWithdraw,
       'isStake' => $isStake,
-      'lastStake' => $getLastStake
+      'lastStake' => $getLastStake,
+      'version' => $version
+    ];
+
+    return response()->json($data, 200);
+  }
+
+  public function getVersion()
+  {
+    $version = Setting::find(1)->version;
+
+    $data = [
+      'version' => $version
     ];
 
     return response()->json($data, 200);
@@ -88,8 +106,12 @@ class UserController extends Controller
             }
 
             $user->token = $user->createToken('android')->accessToken;
-            $isStake = Auth::user()->stake == Carbon::now();
-            $getLastStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->first();
+            if (Auth::user()->stake == null) {
+              $isStake = false;
+            } else {
+              $isStake = Carbon::parse(Auth::user()->stake)->format("d") == Carbon::now()->format("d");
+            }
+            $getLastStake = HistoryStake::where('user', Auth::id())->where('stop', false)->orderBy('created_at', 'DESC')->first();
             return response()->json([
               'username' => $user->username,
               'token' => $user->token,

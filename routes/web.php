@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Log\Logger;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,12 +15,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 });
 
+Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
-if(config("app.env") == "local") {
-    Route::get('/test/view/{page}', function ($page) {
-        return view($page);
-    });
+if (config("app.env") == "local") {
+  Route::get('/test/view/{page}', function ($page) {
+    return view($page);
+  });
 }

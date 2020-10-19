@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\HistoryStake;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +18,8 @@ class StakeController extends Controller
    */
   public function index()
   {
-    $getLastStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->first();
-    $getStake = HistoryStake::where('user', Auth::id())->where('status', false)->orderBy('created_at', 'DESC')->take(10)->get();
+    $getLastStake = HistoryStake::where('user', Auth::id())->where('stop', false)->orderBy('created_at', 'DESC')->first();
+    $getStake = HistoryStake::where('user', Auth::id())->where('stop', false)->orderBy('created_at', 'ASC')->get();
 
     $data = [
       'lastStake' => $getLastStake,
@@ -43,7 +45,7 @@ class StakeController extends Controller
     ]);
 
     $newStake = new HistoryStake();
-    if ($request->stop) {
+    if ($request->status == "WIN") {
       $newStake->user = Auth::id();
       $newStake->fund = $request->fund;
       $newStake->possibility = $request->possibility;
@@ -52,7 +54,11 @@ class StakeController extends Controller
       $newStake->stop = $request->stop == "true";
       $newStake->save();
 
-      HistoryStake::where('user', Auth::id())->where('stop', false)->update(['stop' => true]);
+      $user = User::find(Auth::id());
+      $user->stake = Carbon::now();
+      $user->save();
+
+      HistoryStake::where('user', Auth::id())->update(['stop' => true]);
     } else {
       $newStake->user = Auth::id();
       $newStake->fund = $request->fund;
@@ -74,6 +80,10 @@ class StakeController extends Controller
    */
   public function stop()
   {
+    $user = User::find(Auth::id());
+    $user->stake = Carbon::now();
+    $user->save();
+
     HistoryStake::where('user', Auth::id())->where('stop', false)->update(['stop' => true]);
 
     $data = [
