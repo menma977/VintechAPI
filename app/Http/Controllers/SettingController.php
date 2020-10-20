@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
 {
@@ -81,5 +82,16 @@ class SettingController extends Controller
     public function destroy(Setting $setting)
     {
         //
+    }
+
+    public function version(){
+      return view('setting.version', [
+        "version" => DB::table('settings')->orderBy('version','desc')->limit(1)->get()[0]->version
+      ]);
+    }
+
+    public function updateVersion(Request $request){
+      DB::table('settings')->where('id',1)->update(["version"=>"$request->version"]);
+      return redirect()->back();
     }
 }

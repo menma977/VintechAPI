@@ -26,7 +26,7 @@
         <!-- small box -->
         <div class="small-box bg-info">
           <div class="inner">
-            <h3>150</h3>
+            <h3>{{$totalUser}}</h3>
 
             <p>User Total</p>
           </div>
@@ -41,7 +41,7 @@
         <!-- small box -->
         <div class="small-box bg-success">
           <div class="inner">
-            <h3>999 Doge</h3>
+            <h3>{{$totalTrade}}</h3>
 
             <p>Today Trading</p>
           </div>
@@ -55,7 +55,7 @@
         <!-- small box -->
         <div class="small-box bg-warning">
           <div class="inner">
-            <h3>44</h3>
+            <h3>{{$totalWin}}</h3>
 
             <p>Total Win</p>
           </div>
@@ -69,7 +69,7 @@
         <!-- small box -->
         <div class="small-box bg-danger">
           <div class="inner">
-            <h3>1</h3>
+            <h3>{{$suspendUser}}</h3>
 
             <p>Suspend</p>
           </div>
@@ -88,7 +88,7 @@
     var salesChartCanvas = document.getElementById('barChart').getContext('2d');
 
     var salesChartData = {
-      labels: ['12PM', '1PM', '2PM', "3PM", "4PM", "5PM", "6PM"], //LABEL
+      labels: ["January","February","March","April","May","June","July","August","September","October","November","December"], //LABEL
       datasets: [
         {
           label: 'Online User',
@@ -99,7 +99,7 @@
           pointStrokeColor: 'rgba(60,141,188,1)',
           pointHighlightFill: '#fff',
           pointHighlightStroke: 'rgba(60,141,188,1)',
-          data: [28, 48, 40, 19, 86, 27, 90] // DATASET
+          data: @json($graph) // DATASET
         },
       ]
     }

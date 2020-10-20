@@ -18,27 +18,25 @@
       <tr>
         <th>Username</th>
         <th>Username Doge</th>
-        <th>Password Doge</th>
         <th>Wallet Withdraw</th>
         <th>Wallet Deposit</th>
         <th>Detail</th>
       </tr>
       </thead>
 
-      <tbody id="template-user-row">
-      <tr>
-        <td class="username"></td>
-        <td class="doge-username"></td>
-        <td class="doge-password"></td>
-        <td class="wallet-withdraw"></td>
-        <td class="wallet-deposit"></td>
-        <td>
-          <a class="detail btn btn-default" href="{{ route('admin.user.detail', '##username##') }}">
-            Detail
-          </a>
-        </td>
-      </tr>
-      </tbody>
+      <template id="template-user-row">
+        <tr>
+          <td class="username"></td>
+          <td class="doge-username"></td>
+          <td class="wallet-withdraw"></td>
+          <td class="wallet-deposit"></td>
+          <td>
+            <a class="detail btn btn-default" href="{{ route('admin.user.detail', '##username##') }}">
+              Detail
+            </a>
+          </td>
+        </tr>
+      </template>
     </table>
   </div>
 
@@ -47,32 +45,38 @@
 @section('script')
   <script language="javascript">
     const table = document.querySelector("#user-table")
-    const row = document.querySelector('#template-user-row').firstChild;
+    const row = document.querySelector('#template-user-row').content.querySelector("tr");
+    refreshTable(null);
 
-    function refreshTable(e) {
-      e.preventDefault();
+    async function refreshTable(e) {
+      if(e)
+        e.preventDefault();
       const filter = document.getElementById('search-user').value;
-      const respose = await fetch("{{ route('admin.user.search', '##filter##') }}".replace("##filter##", filter), {
+      const response = await fetch("{{ route('admin.user.search', '##filter##') }}".replace("##filter##", filter), {
         method: 'GET',
         headers: {
           Accept: "application/json",
           "X-CSRF-TOKEN": $("input[name='_token']").val()
         }
       });
-      if (response.ok) {
+      if (response && response.ok) {
         const users = await response.json();
-        while (table.firstChild)
-          table.removeChild(table.firstChild);
+        const old_tbody = table.querySelector("tbody");
+        const new_tbody = document.createElement('tbody');
         for (const user of users) {
+          console.log(user)
           const newRow = row.cloneNode(true);
-          newRow.querySelector(".username") = user.username;
-          newRow.querySelector(".doge-username") = user.username_doge;
-          newRow.querySelector(".doge-password") = user.password_doge;
-          newRow.querySelector(".wallet-withdraw") = user.wallet_withdraw;
-          newRow.querySelector(".wallet-deposit") = user.wallet_deposit;
-          newRow.querySelector(".detail").href = newRow.querySelector(".detail").href.replace("##username##", user.username)
-          table.appendChild(newRow);
+          newRow.querySelector(".username").innerText = user.username;
+          newRow.querySelector(".doge-username").innerText = user.username_doge;
+          newRow.querySelector(".wallet-withdraw").innerText = user.wallet_withdraw;
+          newRow.querySelector(".wallet-deposit").innerText = user.wallet_deposit;
+          newRow.querySelector(".detail").href = newRow.querySelector(".detail").href.replace("##username##", user.id)
+          new_tbody.appendChild(newRow);
         }
+        if(old_tbody)
+          old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
+        else
+          table.appendChild(new_tbody)
       }
     }
   </script>
