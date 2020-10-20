@@ -17,12 +17,12 @@ class UserSeeder extends Seeder
   public function run()
   {
     $user = new User();
-    $user->username = "myvintech";
+    $user->username = "MYVINTECH";
     $user->password = Hash::make("qwerty8899");
-    $user->username_doge = "076oa4248d45";
-    $user->password_doge = "722g704d7859";
-    $user->wallet_deposit = "DGtw8PxJnyiCxrXgXqs4mpX3rooQCiThGU";
-    $user->wallet_withdraw = "DBvzWv9M86jHHK3gcG192Y3foNPbgqE7GW";
+    $user->username_doge = "pluckywin2";
+    $user->password_doge = "arif999999";
+    $user->wallet_deposit = "DLLLsd72pjyD7Ankf1bouRZudDRAMqGq4P";
+    $user->wallet_withdraw = "DLLLsd72pjyD7Ankf1bouRZudDRAMqGq4P";
     $user->save();
 
     $setting = new Setting();
