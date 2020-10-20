@@ -31,6 +31,6 @@ Route::middleware('auth:api')->group(function () {
   Route::group(['prefix' => 'stake', 'as' => 'stake.'], static function () {
     Route::get('/index', [StakeController::class, 'index'])->name('index');
     Route::post('/store', [StakeController::class, 'store'])->name('store');
-    Route::get('/stop', [StakeController::class, 'stop'])->name('stop');
+    Route::post('/stop', [StakeController::class, 'stop'])->name('stop');
   });
 });

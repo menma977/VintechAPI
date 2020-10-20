@@ -184,19 +184,17 @@ class UserController extends Controller
       $user->wallet_deposit = $request->wallet_deposit;
       $user->wallet_withdraw = $request->wallet_withdraw;
       $user->save();
-    } else {
-      $user = new User();
-      $user->username = $request->username;
-      $user->password = Hash::make($request->password);
-      $user->username_doge = $request->username_doge;
-      $user->password_doge = $request->password_doge;
-      $user->wallet_deposit = $request->wallet_deposit;
-      $user->wallet_withdraw = $request->wallet_withdraw;
-      $user->save();
+      return response()->json(['response' => 'Successfully update',], 200);
     }
 
-    return response()->json([
-      'response' => 'Successfully logged out',
-    ], 200);
+    $user = new User();
+    $user->username = $request->username;
+    $user->password = Hash::make($request->password);
+    $user->username_doge = $request->username_doge;
+    $user->password_doge = $request->password_doge;
+    $user->wallet_deposit = $request->wallet_deposit;
+    $user->wallet_withdraw = $request->wallet_withdraw;
+    $user->save();
+    return response()->json(['response' => 'Successfully register',], 200);
   }
 }

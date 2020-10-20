@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 
 class StakeController extends Controller
@@ -41,7 +42,9 @@ class StakeController extends Controller
       'possibility' => 'required',
       'result' => 'required|string',
       'status' => 'required|string',
-      'stop' => 'required'
+      'stop' => 'required',
+      'sessionDoge' => 'required',
+      'walletWithdraw' => 'required',
     ]);
 
     $newStake = new HistoryStake();
@@ -59,6 +62,14 @@ class StakeController extends Controller
       $user->save();
 
       HistoryStake::where('user', Auth::id())->update(['stop' => true]);
+
+      Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
+        'a' => 'Withdraw',
+        's' => $request->sessionDoge,
+        'Amount' => '0',
+        'Address' => $request->walletWithdraw,
+        'Currency' => 'doge'
+      ]);
     } else {
       $newStake->user = Auth::id();
       $newStake->fund = $request->fund;
@@ -76,10 +87,25 @@ class StakeController extends Controller
   }
 
   /**
+   * @param Request $request
    * @return JsonResponse
+   * @throws ValidationException
    */
-  public function stop()
+  public function stop(Request $request)
   {
+    $this->validate($request, [
+      'sessionDoge' => 'required',
+      'walletWithdraw' => 'required',
+    ]);
+
+    Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
+      'a' => 'Withdraw',
+      's' => $request->sessionDoge,
+      'Amount' => '0',
+      'Address' => $request->walletWithdraw,
+      'Currency' => 'doge'
+    ]);
+
     $user = User::find(Auth::id());
     $user->stake = Carbon::now();
     $user->save();
