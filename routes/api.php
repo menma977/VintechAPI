@@ -27,6 +27,7 @@ Route::post('login/android', [UserController::class, 'login'])->name('login.andr
 Route::middleware('auth:api')->group(function () {
   Route::group(['prefix' => 'user', 'as' => 'user.'], static function () {
     Route::get('/index', [UserController::class, 'index'])->name('index');
+    Route::post('/store', [UserController::class, 'register'])->name('store');
     Route::get('/logout', [UserController::class, 'logout'])->name('logout');
   });
 
