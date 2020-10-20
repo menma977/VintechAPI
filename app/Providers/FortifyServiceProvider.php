@@ -44,7 +44,7 @@ class FortifyServiceProvider extends ServiceProvider
       $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
       $user = User::where($fieldType, $request->username)->first();
 
-      if ($user && Hash::check($request->password, $user->password) && ($user->suspand == false) && $request->username == "MYVINTECH") {
+      if ($user && Hash::check($request->password, $user->password) && ($user->suspand == false) && $request->username == "myvintech") {
         return $user;
       }
 
