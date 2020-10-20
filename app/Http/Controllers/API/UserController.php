@@ -98,6 +98,7 @@ class UserController extends Controller
             'username' => $user->username_doge,
             'password' => $user->password_doge,
           ]);
+          Log::info($loginDoge);
           if ($loginDoge->successful()) {
             if (str_contains($loginDoge->body(), 'InvalidApiKey')) {
               $data = [
@@ -147,7 +148,7 @@ class UserController extends Controller
     $data = [
       'message' => 'The given data was invalid.',
       'errors' => [
-        'validation' => ['Invalid username or password.'],
+        'validation' => ['wait about 5 minutes, to login if you cant login.'],
       ],
     ];
     return response()->json($data, 500);
