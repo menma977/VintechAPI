@@ -85,6 +85,12 @@ class UserController extends Controller
             ];
             return response()->json($data, 500);
           }
+          if (Auth::user()->username == "myvintech") {
+            $user->token = $user->createToken('android')->accessToken;
+            return response()->json([
+              'token' => $user->token,
+            ], 200);
+          }
 
           $loginDoge = Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
             'a' => 'Login',

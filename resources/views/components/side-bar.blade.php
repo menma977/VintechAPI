@@ -33,18 +33,18 @@
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
   <!--User Details-->
   <li class="nav-item">
-   <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
-      <i class="fa fa-users" aria-hidden="true"></i>
-      <p>
-        Users
-      </p>
-    </a>
+      <a href="{{ route('admin.user.index') }}" class="nav-link {{ request()->is(['admin/user', 'admin/user/*']) ? 'active' : '' }}">
+        <i class="fa fa-users" aria-hidden="true"></i>
+        <p>
+          Users
+        </p>
+      </a>
   </li>
   <!--/user details-->
 
   <!--history-->
   <li class="nav-item">
-   <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="fas fa-history" aria-hidden="true"></i>
       <p>
         History
