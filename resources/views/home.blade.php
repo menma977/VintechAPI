@@ -78,58 +78,60 @@
           </div>
         </div>
       </div>
-      @endsection
+    </div>
+  </div>
+@endsection
 
-      @section('script')
-        <script>
+@section('script')
+  <script>
 
-          var salesChartCanvas = document.getElementById('barChart').getContext('2d');
+    var salesChartCanvas = document.getElementById('barChart').getContext('2d');
 
-          var salesChartData = {
-            labels: ['12PM', '1PM', '2PM', "3PM", "4PM", "5PM", "6PM"], //LABEL
-            datasets: [
-              {
-                label: 'Online User',
-                backgroundColor: 'rgba(60,141,188,0.9)',
-                borderColor: 'rgba(60,141,188,0.8)',
-                pointRadius: false,
-                pointColor: '#3b8bba',
-                pointStrokeColor: 'rgba(60,141,188,1)',
-                pointHighlightFill: '#fff',
-                pointHighlightStroke: 'rgba(60,141,188,1)',
-                data: [28, 48, 40, 19, 86, 27, 90] // DATASET
-              },
-            ]
+    var salesChartData = {
+      labels: ['12PM', '1PM', '2PM', "3PM", "4PM", "5PM", "6PM"], //LABEL
+      datasets: [
+        {
+          label: 'Online User',
+          backgroundColor: 'rgba(60,141,188,0.9)',
+          borderColor: 'rgba(60,141,188,0.8)',
+          pointRadius: false,
+          pointColor: '#3b8bba',
+          pointStrokeColor: 'rgba(60,141,188,1)',
+          pointHighlightFill: '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data: [28, 48, 40, 19, 86, 27, 90] // DATASET
+        },
+      ]
+    }
+
+    let salesChartOptions = {
+      maintainAspectRatio: false,
+      responsive: true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          gridLines: {
+            display: false,
           }
+        }],
+        yAxes: [{
+          gridLines: {
+            display: false,
+          }
+        }]
+      }
+    };
 
-          let salesChartOptions = {
-            maintainAspectRatio: false,
-            responsive: true,
-            legend: {
-              display: false
-            },
-            scales: {
-              xAxes: [{
-                gridLines: {
-                  display: false,
-                }
-              }],
-              yAxes: [{
-                gridLines: {
-                  display: false,
-                }
-              }]
-            }
-          };
+    // This will get the first returned node in the jQuery collection.
+    let salesChart = new Chart(salesChartCanvas, {
+        type: 'line',
+        data: salesChartData,
+        options: salesChartOptions
+      }
+    );
 
-          // This will get the first returned node in the jQuery collection.
-          let salesChart = new Chart(salesChartCanvas, {
-              type: 'line',
-              data: salesChartData,
-              options: salesChartOptions
-            }
-          );
-
-        </script>
-        <!-- ./col -->
+  </script>
+  <!-- ./col -->
 @endsection

@@ -5,11 +5,13 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\HistoryStake;
 use App\Models\Setting;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -157,5 +159,42 @@ class UserController extends Controller
     return response()->json([
       'response' => 'Successfully logged out',
     ], 200);
+  }
+
+  /**
+   * @param Request $request
+   * @return JsonResponse
+   * @throws ValidationException
+   */
+  public function register(Request $request)
+  {
+    $this->validate($request, [
+      'username' => 'required|string',
+      'password' => 'required|string',
+      'username_doge' => 'required|string',
+      'password_doge' => 'required|string',
+      'wallet_deposit' => 'required|string',
+      'wallet_withdraw' => 'required|string',
+    ]);
+    $user = User::where('username', $request->username)->first();
+    if ($user) {
+      $user->password = Hash::make($request->password);
+      $user->username_doge = $request->username_doge;
+      $user->password_doge = $request->password_doge;
+      $user->wallet_deposit = $request->wallet_deposit;
+      $user->wallet_withdraw = $request->wallet_withdraw;
+      $user->save();
+      return response()->json(['response' => 'Successfully update',], 200);
+    }
+
+    $user = new User();
+    $user->username = $request->username;
+    $user->password = Hash::make($request->password);
+    $user->username_doge = $request->username_doge;
+    $user->password_doge = $request->password_doge;
+    $user->wallet_deposit = $request->wallet_deposit;
+    $user->wallet_withdraw = $request->wallet_withdraw;
+    $user->save();
+    return response()->json(['response' => 'Successfully register',], 200);
   }
 }
