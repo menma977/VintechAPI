@@ -97,6 +97,10 @@
 <!-- overlayScrollbars -->
 <script src="{{ URL::asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 @yield('script')
 </body>
 
