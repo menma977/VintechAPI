@@ -22,7 +22,7 @@ Route::get('/', function () {
 Route::middleware("auth")->group(function(){
   Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-  Route::group(["prefix"=>"user", "as"=>"admuser."], function () {
+  Route::group(["prefix"=>"user", "as"=>"admin.user."], function () {
     Route::get('/', [UserController::class, 'index']);
     Route::get('/search/{query}', [UserController::class, 'filter'])->name('search');
     Route::get('/{username}', [UserController::class, 'detail'])->name('detail');

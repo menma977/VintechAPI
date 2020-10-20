@@ -30,18 +30,18 @@
         <td class="doge-password"></td>
         <td class="wallet-withdraw"></td>
         <td class="wallet-deposit"></td>
-          <a class="detail btn btn-default" href="{{ route('admuser.detail', '##username##') }}">
+          <a class="detail btn btn-default" href="{{ route('admin.user.detail', '##username##') }}">
             Detail
           </a>
         </td>
       </tr>
-    <template>
+    </template>
   </table>
 </div>
 
 @endsection
 
-@section('addscript')
+@section('script')
 <script language="javascript">
   const table = document.querySelector("#user-table")
   const row = document.querySelector('#template-user-row').firstChild;
@@ -49,7 +49,7 @@
   function refreshTable(e) {
     e.preventDefault();
     const filter = document.getElementById('search-user').value;
-    const respose =  await fetch("{{ route('admuser.search', '##filter##') }}".replace("##filter##",filter),{
+    const respose =  await fetch("{{ route('admin.user.search', '##filter##') }}".replace("##filter##",filter),{
       method: 'GET',
       headers: {
         Accept: "application/json",
