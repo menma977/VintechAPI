@@ -106,35 +106,62 @@
 @section('content')
 <div class="col-sm-6">
   <h3 class="m-0 text-dark">List User Details</h3>
-</div><!-- /.col -->
+</div>
 
-<table id="example2" class="table table-bordered table-hover">
+<table id="user-table" class="table table-bordered table-hover">
 
   <tr>
     <th>Username</th>
-    <th>Password</th>
-    <th>History</th>
-    <th>Deposit</th>
-    <th>Withdraw</th>
-    <th>Suspand</th>
+    <th>Username Doge</th>
+    <th>Password Doge</th>
+    <th>Wallet Withdraw</th>
+    <th>Wallet Deposit</th>
+    <th>Detail</th>
   </tr>
 
-  <tr>
-    <td>999 Doge</td>
-    <td>999 Doge
-    </td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-  </tr>
-  <tr>
-    <td>999 Doge</td>
-    <td>999 Doge
-    </td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-  </tr>
+  <template id="template-user-row">
+    <tr>
+      <td class="username"></td>
+      <td class="doge-username"></td>
+      <td class="doge-password"></td>
+      <td class="wallet-withdraw"></td>
+      <td class="wallet-deposit"></td>
+        <a class="detail btn btn-default" href="{{ route('admin.user.profile', '##username##') }}">
+          Detail
+        </a>
+      </td>
+    </tr>
+  <template>
 </table>
+
+<script>
+  const table = document.querySelector("#user-table")
+  const row = document.querySelector('#template-user-row').firstChild;
+
+  async function refreshTable(filter) {
+    const respose =  await fetch("{{ route('search', '##filter##') }}".replace("##filter##",filter),{
+      method: 'GET',
+      headers: {
+        Accept: "application/json",
+        "X-CSRF-TOKEN": $("input[name='_token']").val()
+      }
+    });
+    if(response.ok){
+      const users = await response.json();
+      while(table.firstChild)
+        table.removeChild(table.firstChild);
+      for(const user of users){
+        const newRow = row.cloneNode(true);
+        newRow.querySelector(".username") = user.username;
+        newRow.querySelector(".doge-username") = user.username_doge;
+        newRow.querySelector(".doge-password") = user.password_doge;
+        newRow.querySelector(".wallet-withdraw") = user.wallet_withdraw;
+        newRow.querySelector(".wallet-deposit") = user.wallet_deposit;
+        newRow.querySelector(".detail").href = newRow.querySelector(".detail").href.replace("##username##", user.username)
+        table.appendChild(newRow);
+      }
+    }
+  }
+</script>
 
 @endsection

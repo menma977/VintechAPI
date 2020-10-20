@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\HistoryStake;
@@ -11,8 +11,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-class SearchController extends Controller
+class UserController extends Controller
 {
+
+  public function index(){
+    return view('user.index');
+  }
+
+  public function details($username){
+    return view('user.index');
+  }
+
   /**
    * @param Request $request
    * @return JsonResponse

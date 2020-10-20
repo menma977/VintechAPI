@@ -41,7 +41,7 @@
     <!-- Brand Logo -->
     <a href="{{ url('/') }}" class="brand-link">
       <img src="{{ asset('img/logo_VINTECH__Biru_Hijau_.png')  }}" alt="Vintech Logo" class="brand-image img-circle elevation-3"
-           style="opacity: .8">
+          style="opacity: .8">
       <span class="brand-text font-weight-light">Vintech Admin</span>
     </a>
 
@@ -97,9 +97,7 @@
 <!-- overlayScrollbars -->
 <script src="{{ URL::asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 
-@section('script')
-
-@show
+@yield('script')
 </body>
 
 </html>

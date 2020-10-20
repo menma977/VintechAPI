@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +19,16 @@ Route::get('/', function () {
   return view('welcome');
 });
 
-Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
-Route::get('/search/{query}', [SearchController::class, 'filter'])->name('search')->middleware('auth:api');
+Route::middleware("auth")->group(function(){
+  Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+  Route::group(["prefix"=>"user", "as"=>"admuser."], function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::get('/search/{query}', [UserController::class, 'filter'])->name('search');
+    Route::get('/{username}', [UserController::class, 'detail'])->name('detail');
+  });
+});
+
 
 if (config("app.env") == "local") {
   Route::get('/test/view/{page}', function ($page) {
