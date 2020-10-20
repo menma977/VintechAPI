@@ -33,4 +33,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/store', [StakeController::class, 'store'])->name('store');
     Route::get('/stop', [StakeController::class, 'stop'])->name('stop');
   });
+
 });

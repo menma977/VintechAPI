@@ -106,9 +106,9 @@
 @section('content')
 <div class="col-sm-6">
   <h3 class="m-0 text-dark">List User Details</h3>
-</div><!-- /.col -->
+</div>
 
-<table id="example2" class="table table-bordered table-hover">
+<table id="user-table" class="table table-bordered table-hover">
 
   <tr>
     <th>Username</th>
@@ -119,22 +119,24 @@
     <th>Suspand</th>
   </tr>
 
-  <tr>
-    <td>999 Doge</td>
-    <td>999 Doge
-    </td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-  </tr>
-  <tr>
-    <td>999 Doge</td>
-    <td>999 Doge
-    </td>
-    <td>-</td>
-    <td>-</td>
-    <td>-</td>
-  </tr>
+  <template id="table-user-row-template">
+    <tr>
+      <td class="username"></td>
+      <td class="doge-username"></td>
+      <td class="doge-password"></td>
+      <td class="wallet-withdraw"></td>
+      <td class="wallet-deposit"></td>
+      <td class="suspended"></td>
+    </tr>
+  <template>
 </table>
+
+<script>
+  const table = document.querySelector("#user-table")
+  const row = document.querySelector("#table-user-row-template")
+  function reqUserList(search){
+    fetch()
+  }
+</script>
 
 @endsection

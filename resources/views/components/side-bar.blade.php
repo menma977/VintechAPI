@@ -1,7 +1,7 @@
 <li class="nav-header">DashBoard</li>
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="fas fa-globe-asia"></i>
       <p>
         Online Users
@@ -10,7 +10,7 @@
     </a>
   </li>
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="fa fa-users" aria-hidden="true"></i>
       <p>
         Total Users
@@ -19,7 +19,7 @@
     </a>
   </li>
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="far fa-chart-bar"></i>
       <p>
         Trading Users
@@ -33,7 +33,7 @@
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
   <!--User Details-->
   <li class="nav-item">
-    <a href="/resource/user/profile.blade.php" class="nav-link">
+   <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="fa fa-users" aria-hidden="true"></i>
       <p>
         Users
@@ -44,7 +44,7 @@
 
   <!--history-->
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+   <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="fas fa-history" aria-hidden="true"></i>
       <p>
         History
@@ -55,7 +55,7 @@
 
   <!--withdraw-->
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="fa fa-credit-card" aria-hidden="true"></i>
       <p>
         Withdraw
@@ -65,7 +65,7 @@
 
   <!--deposit-->
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="far fa-money-bill-alt"></i>
       <p>
         Deposit
@@ -75,7 +75,7 @@
 
 
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="nav-icon fas fa-th"></i>
       <p>
         Suspand
@@ -87,7 +87,7 @@
 <li class="nav-header">Option</li>
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
   <li class="nav-item">
-    <a href="/public/widgets.html" class="nav-link">
+    <a href="{{ route('level.index') }}" class="nav-link {{ request()->is(['level', 'level/*']) ? 'active' : '' }}">
       <i class="fal fa-code-commit"></i>
       <p>
         Version
