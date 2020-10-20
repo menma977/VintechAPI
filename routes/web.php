@@ -19,11 +19,11 @@ Route::get('/', function () {
   return view('welcome');
 });
 
-Route::middleware("auth")->group(function(){
+Route::middleware("auth")->group(function () {
   Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-  Route::group(["prefix"=>"user", "as"=>"admin.user."], function () {
-    Route::get('/', [UserController::class, 'index']);
+  Route::group(["prefix" => "admin/user", "as" => "admin.user."], function () {
+    Route::get('/', [UserController::class, 'index'])->name('index');
     Route::get('/search/{query}', [UserController::class, 'filter'])->name('search');
     Route::get('/details/{username}', [UserController::class, 'detail'])->name('detail');
   });
