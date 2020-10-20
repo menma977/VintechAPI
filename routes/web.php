@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,7 @@ Route::get('/', function () {
 });
 
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
+Route::get('/search/{query}', [SearchController::class, 'filter'])->name('search')->middleware('auth:api');
 
 if (config("app.env") == "local") {
   Route::get('/test/view/{page}', function ($page) {
