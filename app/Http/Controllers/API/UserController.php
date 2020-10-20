@@ -92,7 +92,10 @@ class UserController extends Controller
             ], 200);
           }
 
-          $loginDoge = Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
+          $loginDoge = Http::asForm()->withHeaders([
+            'referer'=>'https://wallet.myvintech.com',
+            'origin'=>'https://wallet.myvintech.com'
+          ])->post('https://www.999doge.com/api/web.aspx', [
             'a' => 'Login',
             'Key' => '1b4755ced78e4d91bce9128b9a053cad',
             'username' => $user->username_doge,
