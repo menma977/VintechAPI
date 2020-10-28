@@ -1,19 +1,10 @@
 <li class="nav-header">DashBoard</li>
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <li class="nav-item">
-      <a href="{{ route('home') }}" class="nav-link {{ request()->is(['home', 'home/*']) ? 'active' : '' }}">
-        <i class="fas fa-home"></i>
-        <p>
-          Home
-        </p>
-      </a>
-    </li>
-    <!--online-->
   <li class="nav-item">
-    <a href="{{ route('online') }}" class="nav-link {{ request()->is(['online', 'online/*']) ? 'active' : '' }}">
-      <i class="fas fa-globe-americas"></i>
+    <a href="{{ route('home') }}" class="nav-link {{ request()->is(['home', 'home/*']) ? 'active' : '' }}">
+      <i class="fas fa-home"></i>
       <p>
-        Online Users
+        Home
       </p>
     </a>
   </li>

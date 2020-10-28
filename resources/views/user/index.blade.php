@@ -6,10 +6,10 @@
       <h3 class="m-0 text-dark">List User Details</h3>
     </div>
 
-    <form role="form" class="align-self-end" onsubmit="refreshTable">
+    <form role="form" class="align-self-end">
       <div class="form-group">
         <label for="search-user">Search: </label>
-        <input type="text" id="search-user"/>
+        <input type="text" id="search-user" onkeyup="refreshTable()"/>
       </div>
     </form>
     <table id="user-table" class="table table-bordered table-hover">
@@ -43,13 +43,13 @@
 @endsection
 
 @section('script')
-  <script language="javascript">
+  <script>
     const table = document.querySelector("#user-table")
     const row = document.querySelector('#template-user-row').content.querySelector("tr");
     refreshTable(null);
 
     async function refreshTable(e) {
-      if(e)
+      if (e)
         e.preventDefault();
       const filter = document.getElementById('search-user').value;
       const response = await fetch("{{ route('admin.user.search', '##filter##') }}".replace("##filter##", filter), {
@@ -64,7 +64,7 @@
         const old_tbody = table.querySelector("tbody");
         const new_tbody = document.createElement('tbody');
         for (const user of users) {
-          console.log(user)
+          // console.log(user)
           const newRow = row.cloneNode(true);
           newRow.querySelector(".username").innerText = user.username;
           newRow.querySelector(".doge-username").innerText = user.username_doge;
@@ -73,7 +73,7 @@
           newRow.querySelector(".detail").href = newRow.querySelector(".detail").href.replace("##username##", user.id)
           new_tbody.appendChild(newRow);
         }
-        if(old_tbody)
+        if (old_tbody)
           old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
         else
           table.appendChild(new_tbody)
