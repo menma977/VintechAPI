@@ -49,6 +49,13 @@ class StakeController extends Controller
 
     $newStake = new HistoryStake();
     if ($request->status == "WIN") {
+      $res = Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
+        'a' => 'Withdraw',
+        's' => $request->sessionDoge,
+        'Amount' => '0',
+        'Address' => $request->walletWithdraw,
+        'Currency' => 'doge'
+      ]);
       $newStake->user = Auth::id();
       $newStake->fund = $request->fund;
       $newStake->possibility = $request->possibility;
@@ -56,20 +63,16 @@ class StakeController extends Controller
       $newStake->status = $request->status;
       $newStake->stop = $request->stop == "true";
       $newStake->save();
+      if (str_contains($res->body(), 'Pending') == true) {
+        $user = User::find(Auth::id());
+        $user->stake = Carbon::now();
+        $user->save();
 
-      $user = User::find(Auth::id());
-      $user->stake = Carbon::now();
-      $user->save();
-
-      HistoryStake::where('user', Auth::id())->update(['stop' => true]);
-
-      Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
-        'a' => 'Withdraw',
-        's' => $request->sessionDoge,
-        'Amount' => '0',
-        'Address' => $request->walletWithdraw,
-        'Currency' => 'doge'
-      ]);
+        HistoryStake::where('user', Auth::id())->update(['stop' => true]);
+      } else {
+        $data = ['message' => 'pesan error'];
+        return response()->json($data, 500);
+      }
     } else {
       $newStake->user = Auth::id();
       $newStake->fund = $request->fund;
@@ -98,7 +101,7 @@ class StakeController extends Controller
       'walletWithdraw' => 'required',
     ]);
 
-    Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
+    $res = Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
       'a' => 'Withdraw',
       's' => $request->sessionDoge,
       'Amount' => '0',
@@ -106,12 +109,25 @@ class StakeController extends Controller
       'Currency' => 'doge'
     ]);
 
-    $user = User::find(Auth::id());
-    $user->stake = Carbon::now();
-    $user->save();
+    $newStake = new HistoryStake();
+    $newStake->user = Auth::id();
+    $newStake->fund = $request->fund;
+    $newStake->possibility = $request->possibility;
+    $newStake->result = $request->result;
+    $newStake->status = $request->status;
+    $newStake->stop = $request->stop == "true";
+    $newStake->save();
+    if (str_contains($res->body(), 'Pending') == true) {
 
-    HistoryStake::where('user', Auth::id())->where('stop', false)->update(['stop' => true]);
+      $user = User::find(Auth::id());
+      $user->stake = Carbon::now();
+      $user->save();
 
+      HistoryStake::where('user', Auth::id())->update(['stop' => true]);
+    } else {
+      $data = ['message' => 'pesan error'];
+      return response()->json($data, 500);
+    }
     $data = [
       'message' => 'stake has been stopped',
     ];
