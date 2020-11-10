@@ -23,7 +23,6 @@ Route::get('version', [UserController::class, 'getVersion'])->name('version');
 Route::post('login/android', [UserController::class, 'login'])->name('login.android');
 
 
-
 Route::middleware('auth:api')->group(function () {
   Route::group(['prefix' => 'user', 'as' => 'user.'], static function () {
     Route::get('/index', [UserController::class, 'index'])->name('index');
@@ -33,6 +32,7 @@ Route::middleware('auth:api')->group(function () {
 
   Route::group(['prefix' => 'stake', 'as' => 'stake.'], static function () {
     Route::get('/index', [StakeController::class, 'index'])->name('index');
+    Route::post('/tread', [StakeController::class, 'tread']);
     Route::post('/store', [StakeController::class, 'store'])->name('store');
     Route::post('/stop', [StakeController::class, 'stop'])->name('stop');
   });
