@@ -20,7 +20,7 @@ header('Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Conte
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
 
 Route::get('version', [UserController::class, 'getVersion'])->name('version');
-Route::post('login/android', [UserController::class, 'login'])->name('login.android');
+Route::post('login/android', [UserController::class, 'login'])->name('login.android')->middleware('throttle:1,1');
 
 
 Route::middleware('auth:api')->group(function () {
@@ -32,8 +32,8 @@ Route::middleware('auth:api')->group(function () {
 
   Route::group(['prefix' => 'stake', 'as' => 'stake.'], static function () {
     Route::get('/index', [StakeController::class, 'index'])->name('index');
-    Route::post('/tread', [StakeController::class, 'tread']);
+    Route::post('/tread', [StakeController::class, 'tread'])->middleware('throttle:1,0.05');
     Route::post('/store', [StakeController::class, 'store'])->name('store');
-    Route::post('/stop', [StakeController::class, 'stop'])->name('stop');
+    Route::post('/stop', [StakeController::class, 'stop'])->name('stop')->middleware('throttle:1,1');
   });
 });

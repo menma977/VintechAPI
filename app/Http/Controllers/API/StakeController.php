@@ -124,14 +124,76 @@ class StakeController extends Controller
    * @return JsonResponse
    * @throws ValidationException
    */
+  public function store(Request $request)
+  {
+    $this->validate($request, [
+      'fund' => 'required',
+      'possibility' => 'required',
+      'result' => 'required|string',
+      'status' => 'required|string',
+      'stop' => 'required',
+      'sessionDoge' => 'required',
+      'walletWithdraw' => 'required',
+    ]);
+
+    $newStake = new HistoryStake();
+    if ($request->status == "WIN") {
+      // https://corsdoge.herokuapp.com/doge
+      // https://www.999doge.com/api/web.aspx
+      $res = Http::asForm()->post('https://corsdoge.herokuapp.com/doge', [
+        'a' => 'Withdraw',
+        's' => $request->sessionDoge,
+        'Amount' => '0',
+        'Address' => $request->walletWithdraw,
+        'Currency' => 'doge'
+      ]);
+      $newStake->user = Auth::id();
+      $newStake->fund = $request->fund;
+      $newStake->possibility = $request->possibility;
+      $newStake->result = $request->result;
+      $newStake->status = $request->status;
+      $newStake->stop = $request->stop == "true";
+      $newStake->save();
+      if (str_contains($res->body(), 'Pending') == true) {
+        $user = User::find(Auth::id());
+        $user->stake = Carbon::now();
+        $user->save();
+
+        HistoryStake::where('user', Auth::id())->update(['stop' => true]);
+      } else {
+        $data = ['message' => 'pesan error'];
+        return response()->json($data, 500);
+      }
+    } else {
+      $newStake->user = Auth::id();
+      $newStake->fund = $request->fund;
+      $newStake->possibility = $request->possibility;
+      $newStake->result = $request->result;
+      $newStake->status = $request->status;
+      $newStake->save();
+    }
+
+    $data = [
+      'message' => 'data is saved',
+    ];
+
+    return response()->json($data, 200);
+  }
+
+  /**
+   * @param Request $request
+   * @return JsonResponse
+   * @throws ValidationException
+   */
   public function stop(Request $request)
   {
     $this->validate($request, [
       'sessionDoge' => 'required',
       'walletWithdraw' => 'required',
     ]);
-
-    $res = Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
+// https://corsdoge.herokuapp.com/doge
+// https://www.999doge.com/api/web.aspx
+    $res = Http::asForm()->post('https://corsdoge.herokuapp.com/doge', [
       'a' => 'Withdraw',
       's' => $request->sessionDoge,
       'Amount' => '0',
@@ -139,16 +201,21 @@ class StakeController extends Controller
       'Currency' => 'doge'
     ]);
 
-    $newStake = new HistoryStake();
-    $newStake->user = Auth::id();
-    $newStake->fund = $request->fund;
-    $newStake->possibility = $request->possibility;
-    $newStake->result = $request->result;
-    $newStake->status = $request->status;
-    $newStake->stop = $request->stop == "true";
-    $newStake->save();
+    // $newStake = new HistoryStake();
+    // $newStake->user = Auth::id();
+    // $newStake->fund = $request->fund;
+    // $newStake->possibility = $request->possibility;
+    // $newStake->result = $request->result;
+    // $newStake->status = $request->status;
+    // $newStake->stop = $request->stop == "true";
+    // $newStake->save();
     if (str_contains($res->body(), 'Pending') == true) {
+      $user = User::find(Auth::id());
+      $user->stake = Carbon::now();
+      $user->save();
 
+      HistoryStake::where('user', Auth::id())->update(['stop' => true]);
+    } else if (str_contains($res->body(), 'InsufficientFunds') == true) {
       $user = User::find(Auth::id());
       $user->stake = Carbon::now();
       $user->save();
