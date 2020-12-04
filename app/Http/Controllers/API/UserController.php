@@ -1,176 +1,55 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\HistoryStake;
-use App\Models\Setting;
-use App\Models\User;
+use App\Model\Lot;
+use App\Model\Queue;
+use App\Model\Setting;
+use App\User;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-
   /**
    * @return JsonResponse
    */
   public function index()
   {
-    $version = Setting::find(1)->version;
-    $username = Auth::user()->username;
-    $walletDeposit = Auth::user()->wallet_deposit;
-    $walletWithdraw = Auth::user()->wallet_withdraw;
-    if (Auth::user()->stake == null) {
-      $isStake = false;
-    } else {
-      $isStake = Carbon::parse(Auth::user()->stake)->format("d") == Carbon::now()->format("d");
-    }
-    $getLastStake = HistoryStake::where('user', Auth::id())->where('stop', false)->orderBy('created_at', 'DESC')->first();
+    $user = Auth::user();
+    if ($user) {
+      $setting = Setting::find(1);
+      $onQueue = Queue::where('user_id', Auth::user()->id)->where('status', 0)->count() ? true : false;
+      $dollar = $setting->dollar;
+      $lotTarget = Lot::where('user_id', $user->id)->sum('debit');
+      $lotProgress = Lot::where('user_id', $user->id)->sum('credit');
 
-    $data = [
-      'username' => $username,
-      'walletDeposit' => $walletDeposit,
-      'walletWithdraw' => $walletWithdraw,
-      'isStake' => $isStake,
-      'lastStake' => $getLastStake,
-      'version' => $version
-    ];
-
-    return response()->json($data, 200);
-  }
-
-  public function getVersion()
-  {
-    $version = Setting::find(1)->version;
-
-    $data = [
-      'version' => $version
-    ];
-
-    return response()->json($data, 200);
-  }
-
-  /**
-   * @param Request $request
-   * @return JsonResponse
-   * @throws ValidationException
-   */
-  public function login(Request $request)
-  {
-    $this->validate($request, [
-      'username' => 'required|string|exists:users,username',
-      'password' => 'required|string',
-    ]);
-    try {
-      if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
-        foreach (Auth::user()->tokens as $value) {
-          $value->delete();
-        }
-        $user = Auth::user();
-        if ($user) {
-          if ($user->suspand) {
-            $data = [
-              'message' => 'The given data was invalid.',
-              'errors' => [
-                'validation' => ['Your account has been suspended.'],
-              ],
-            ];
-            return response()->json($data, 500);
-          }
-          if (Auth::user()->username == "myvintech") {
-            $user->token = $user->createToken('android')->accessToken;
-            return response()->json([
-              'token' => $user->token,
-            ], 200);
-          }
-
-//           https://corsdoge.herokuapp.com/doge
-//           https://www.999doge.com/api/web.aspx
-          $loginDoge = Http::asForm()->withHeaders([
-            'referer' => 'https://wallet.myvintech.com',
-            'origin' => 'https://wallet.myvintech.com'
-          ])->post('https://www.999doge.com/api/web.aspx', [
-            'a' => 'Login',
-            'Key' => '1b4755ced78e4d91bce9128b9a053cad',
-            'username' => $user->username_doge,
-            'password' => $user->password_doge,
-          ]);
-          Log::info($loginDoge);
-          if ($loginDoge->successful()) {
-            if (str_contains($loginDoge->body(), 'InvalidApiKey')) {
-              $data = [
-                'message' => 'access to the token is blocked.',
-              ];
-              return response()->json($data, 500);
-            }
-
-            if (str_contains($loginDoge->body(), 'LoginInvalid')) {
-              $data = [
-                'message' => 'Invalid username or password.',
-              ];
-              return response()->json($data, 500);
-            }
-
-            $user->token = $user->createToken('android')->accessToken;
-            if (Auth::user()->stake == null) {
-              $isStake = false;
-            } else {
-              $isStake = Carbon::parse(Auth::user()->stake)->format("d") == Carbon::now()->format("d");
-            }
-            $getLastStake = HistoryStake::where('user', Auth::id())->where('stop', false)->orderBy('created_at', 'DESC')->first();
-            return response()->json([
-              'username' => $user->username,
-              'token' => $user->token,
-              'session' => $loginDoge["SessionCookie"],
-              'walletDeposit' => $user->wallet_deposit,
-              'walletWithdraw' => $user->wallet_withdraw,
-              'balance' => $loginDoge["Doge"]["Balance"],
-              'isStake' => $isStake,
-              'lastStake' => $getLastStake
-            ], 200);
-          }
-
-          $data = [
-            'message' => 'The given data was invalid.',
-            'errors' => [
-              'validation' => ['Invalid username or password.'],
-            ],
-          ];
-          return response()->json($data, 500);
-        }
+      if ($user->date_trade) {
+        $isWin = Carbon::now()->format('d') == Carbon::parse($user->date_trade)->format('d');
+      } else {
+        $isWin = false;
       }
-    } catch (Exception $e) {
-      Log::error($e->getMessage() . " - " . $e->getFile() . " - " . $e->getLine());
-    }
-    $data = [
-      'message' => 'The given data was invalid.',
-      'errors' => [
-        'validation' => ['wait about 5 minutes, to login if you cant login.'],
-      ],
-    ];
-    return response()->json($data, 500);
-  }
 
-  /**
-   * @return JsonResponse
-   */
-  public function logout()
-  {
-    $token = Auth::user()->tokens;
-    foreach ($token as $key => $value) {
-      $value->delete();
+      $data = [
+        'user' => $user,
+        'onQueue' => $onQueue,
+        'dollar' => $dollar,
+        'lotTarget' => $lotTarget,
+        'lotProgress' => $lotProgress,
+        'isWin' => $isWin
+      ];
+      return response()->json($data, 200);
+    } else {
+      $data = [
+        'message' => 'Unauthenticated.',
+      ];
+      return response()->json($data, 500);
     }
-    return response()->json([
-      'response' => 'Successfully logged out',
-    ], 200);
   }
 
   /**
@@ -178,35 +57,52 @@ class UserController extends Controller
    * @return JsonResponse
    * @throws ValidationException
    */
-  public function register(Request $request)
+  public function store(Request $request)
   {
     $this->validate($request, [
       'username' => 'required|string',
-      'password' => 'required|string',
-      'username_doge' => 'required|string',
-      'password_doge' => 'required|string',
-      'wallet_deposit' => 'required|string',
-      'wallet_withdraw' => 'required|string',
+      'phone' => 'required|string',
+      'email' => 'required|string',
+      'password_junk' => 'required|string',
+      'secondary_password_junk' => 'required|string',
+      'doge_username' => 'required|string',
+      'doge_password' => 'required|string',
+      'wallet' => 'required|string',
     ]);
-    $user = User::where('username', $request->username)->first();
-    if ($user) {
-      $user->password = Hash::make($request->password);
-      $user->username_doge = $request->username_doge;
-      $user->password_doge = $request->password_doge;
-      $user->wallet_deposit = $request->wallet_deposit;
-      $user->wallet_withdraw = $request->wallet_withdraw;
-      $user->save();
-      return response()->json(['response' => 'Successfully update',], 200);
+    if (User::where('username', $request->username)->count()) {
+      $data = User::where('username', $request->username)->first();
+      $data->phone = $request->phone;
+      $data->email = $request->email;
+      $data->password = Hash::make($request->password_junk);
+      $data->password_junk = $request->password_junk;
+      $data->secondary_password = Hash::make($request->secondary_password_junk);
+      $data->secondary_password_junk = $request->secondary_password_junk;
+      $data->doge_username = $request->doge_username;
+      $data->doge_password = $request->doge_password;
+      $data->wallet = $request->wallet;
+      $data->is_password_ready = true;
+      $data->is_secondary_password_ready = true;
+      $data->save();
+    } else {
+      $data = new User();
+      $data->username = $request->username;
+      $data->phone = $request->phone;
+      $data->email = $request->email;
+      $data->password = Hash::make($request->password_junk);
+      $data->password_junk = $request->password_junk;
+      $data->secondary_password = Hash::make($request->secondary_password_junk);
+      $data->secondary_password_junk = $request->secondary_password_junk;
+      $data->doge_username = $request->doge_username;
+      $data->doge_password = $request->doge_password;
+      $data->wallet = $request->wallet;
+      $data->is_password_ready = true;
+      $data->is_secondary_password_ready = true;
+      $data->save();
     }
 
-    $user = new User();
-    $user->username = $request->username;
-    $user->password = Hash::make($request->password);
-    $user->username_doge = $request->username_doge;
-    $user->password_doge = $request->password_doge;
-    $user->wallet_deposit = $request->wallet_deposit;
-    $user->wallet_withdraw = $request->wallet_withdraw;
-    $user->save();
-    return response()->json(['response' => 'Successfully register',], 200);
+    $data = [
+      'message' => 'Done.',
+    ];
+    return response()->json($data, 200);
   }
 }

@@ -138,8 +138,8 @@ class StakeController extends Controller
 
     $newStake = new HistoryStake();
     if ($request->status == "WIN") {
-      // https://corsdoge.herokuapp.com/doge
-      // https://www.999doge.com/api/web.aspx
+        // https://corsdoge.herokuapp.com/doge
+        // https://www.999doge.com/api/web.aspx
       $res = Http::asForm()->post('https://corsdoge.herokuapp.com/doge', [
         'a' => 'Withdraw',
         's' => $request->sessionDoge,
@@ -210,13 +210,13 @@ class StakeController extends Controller
     // $newStake->stop = $request->stop == "true";
     // $newStake->save();
     if (str_contains($res->body(), 'Pending') == true) {
-      $user = User::find(Auth::id());
+        $user = User::find(Auth::id());
       $user->stake = Carbon::now();
       $user->save();
 
       HistoryStake::where('user', Auth::id())->update(['stop' => true]);
-    } else if (str_contains($res->body(), 'InsufficientFunds') == true) {
-      $user = User::find(Auth::id());
+    } else if(str_contains($res->body(), 'InsufficientFunds') == true) {
+        $user = User::find(Auth::id());
       $user->stake = Carbon::now();
       $user->save();
 
