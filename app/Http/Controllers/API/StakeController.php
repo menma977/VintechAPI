@@ -193,7 +193,7 @@ class StakeController extends Controller
     ]);
 // https://corsdoge.herokuapp.com/doge
 // https://www.999doge.com/api/web.aspx
-    $res = Http::asForm()->post('https://corsdoge.herokuapp.com/doge', [
+    $res = Http::asForm()->post('https://www.999doge.com/api/web.aspx', [
       'a' => 'Withdraw',
       's' => $request->sessionDoge,
       'Amount' => '0',
