@@ -3,6 +3,11 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use Symfony\Component\HttpFoundation\Response;
+use Throwable;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 class Handler extends ExceptionHandler
 {
@@ -12,7 +17,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        OAuthServerException::class
     ];
 
     /**
@@ -34,4 +39,19 @@ class Handler extends ExceptionHandler
     {
         //
     }
+    
+    /**
+   * @param $request
+   * @param $e
+   * @return JsonResponse|\Illuminate\Http\Response|Response
+   * @throws Throwable
+   */
+  public function render($request, $e)
+  {
+    if ($e instanceof ThrottleRequestsException) {
+      return response()->json(['message' => 'to many request please slow down and wait 1 minute'], 500);
+    }
+
+    return parent::render($request, $e);
+  }
 }
