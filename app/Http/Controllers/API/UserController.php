@@ -31,7 +31,7 @@ class UserController extends Controller
     if (Auth::user()->stake == null) {
       $isStake = false;
     } else {
-      $isStake = Carbon::parse(Auth::user()->stake)->format("d") == Carbon::now()->format("d");
+      $isStake = Carbon::parse(Auth::user()->stake)->format("y-m-d") == Carbon::now()->format("y-m-d");
     }
     $getLastStake = HistoryStake::where('user', Auth::id())->where('stop', false)->orderBy('created_at', 'DESC')->first();
 
